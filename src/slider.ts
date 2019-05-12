@@ -65,7 +65,7 @@ export class Slider {
         window.addEventListener("resize", this.updateSliderDimension);
     }
 
-    handleDotsClick(event: MouseEvent) {
+    handleDotsClick(event: MouseEvent): void {
         let target = event.target as HTMLButtonElement;
         if (target.nodeName === "BUTTON") {
             this.curSlide = parseInt(target.getAttribute("data-slide"));
@@ -126,7 +126,7 @@ export class Slider {
         this.isAnimating = false;
     }
 
-    addSlideWith() {
+    addSlideWith(): void {
         this.sliderInner.style.width = (this.totalSlides + 2) * 100 + "%";
         for (let _i = 0; _i < this.totalSlides + 2; _i++) {
             this.allSlides[_i].style.width = 100 / (this.totalSlides + 2) + "%";
@@ -134,7 +134,7 @@ export class Slider {
         }
     }
 
-    appendClones() {
+    appendClones(): void {
         let cloneFirst = this.sliderContainer.querySelectorAll(".slide")[0].cloneNode(true);
         this.sliderInner.appendChild(cloneFirst);
         let cloneLast = this.sliderContainer.querySelectorAll(".slide")
@@ -142,7 +142,7 @@ export class Slider {
         this.sliderInner.insertBefore(cloneLast, this.sliderInner.firstChild);
     }
 
-    loadedImg(el) {
+    loadedImg(el): void {
         let loaded = false;
         let loadHandler = () => {
             if (loaded) {
@@ -167,7 +167,7 @@ export class Slider {
         }
     }
 
-    startSwipe(e) {
+    startSwipe(e): void {
         let touch = e;
         this.getCurLeft();
         if (!this.isAnimating) {
@@ -182,7 +182,7 @@ export class Slider {
         }
     }
 
-    swipeMove(e) {
+    swipeMove(e): void {
         let touch = e;
         if (e.type === "touchmove") {
             touch = e.targetTouches[0] || e.changedTouches[0];
@@ -208,7 +208,7 @@ export class Slider {
         this.sliderInner.style.transform = `translateX(${this.curLeft + this.moveX - this.startX}px)`;
     }
 
-    swipeEnd() {
+    swipeEnd(): void {
         this.getCurLeft();
 
         let xMinusY = Math.abs(this.moveX - this.startX);
@@ -241,7 +241,7 @@ export class Slider {
         removeMultiListener(document.body, ['mouseup', 'touchend'], this.swipeEnd);
     }
 
-    handleLeftArrowClick() {
+    handleLeftArrowClick(): void {
         if (!this.sliderContainer.classList.contains('isAnimating')) {
             if (this.curSlide == 1) {
                 this.curSlide = this.totalSlides + 1;
@@ -254,7 +254,7 @@ export class Slider {
         }
     }
 
-    handleRightArrowClick() {
+    handleRightArrowClick(): void {
         if (!this.sliderContainer.classList.contains('isAnimating')) {
             if (this.curSlide == this.totalSlides) {
                 this.curSlide = 0;
@@ -267,12 +267,12 @@ export class Slider {
         }
     }
 
-    initArrows() {
+    initArrows(): void {
         if (this.arrowLeft) this.arrowLeft.addEventListener("click",this.handleLeftArrowClick, false);
         if (this.arrowRight) this.arrowRight.addEventListener("click", this.handleRightArrowClick, false);
     }
 
-    setDot() {
+    setDot(): void {
         let targetDot = this.curSlide - 1;
 
         for (let j = 0; j < this.totalSlides; j++) {
@@ -287,7 +287,7 @@ export class Slider {
         this.dotsWrapper.querySelectorAll("li")[targetDot].classList.add('active')
     }
 
-    updateSliderDimension() {
+    updateSliderDimension(): void {
         this.slideW = parseInt(this.sliderContainer.querySelectorAll(".slide")[0].offsetWidth, 10);
         this.sliderInner.style.transform = `translateX(${-this.slideW * this.curSlide})px`;
 
