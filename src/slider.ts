@@ -275,18 +275,18 @@ export class Slider {
     }
 
     setDot() {
-        let tardot = this.curSlide - 1;
+        let targetDot = this.curSlide - 1;
 
         for (let j = 0; j < this.totalSlides; j++) {
             this.dotsWrapper.querySelectorAll("li")[j].classList.remove('active');
         }
 
         if (this.curSlide - 1 < 0) {
-            tardot = this.totalSlides - 1;
+            targetDot = this.totalSlides - 1;
         } else if (this.curSlide - 1 > this.totalSlides - 1) {
-            tardot = 0;
+            targetDot = 0;
         }
-        this.dotsWrapper.querySelectorAll("li")[tardot].classList.add('active')
+        this.dotsWrapper.querySelectorAll("li")[targetDot].classList.add('active')
     }
 
     updateSliderDimension() {
