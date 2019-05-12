@@ -1,2 +1,2 @@
 # js-slider
-A very tiny javascript slider written in modern ES6 and Typescript
+A very tiny javascript slider written in modern Javascript and Typescript
