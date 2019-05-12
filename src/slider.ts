@@ -2,7 +2,7 @@ import {addMultiListener, removeMultiListener} from './utils/event-listeners';
 import {ISliderParameters} from './types/slider-parameters.interface';
 
 export class Slider {
-    private readonly target;
+    private readonly sliderContainer;
     private dotsWrapper: HTMLElement;
     private readonly arrowLeft: HTMLElement;
     private readonly arrowRight: HTMLElement;
@@ -38,7 +38,7 @@ export class Slider {
             transition = {speed: 300, easing: ""}
         }: ISliderParameters
     ) {
-        this.target = target;
+        this.sliderContainer = target;
         this.dotsWrapper = dotsWrapper;
         this.arrowLeft = arrowLeft;
         this.arrowRight = arrowRight;
@@ -88,50 +88,33 @@ export class Slider {
     gotoSlide(): void {
         this.sliderInner.style.transition = `transform ${this.transition.speed}ms ${this.transition.easing}`;
         this.sliderInner.style.transform = `translateX(${-this.curSlide * this.slideW }px)`;
-        this.target.classList.add('isAnimating');
+        this.sliderContainer.classList.add('isAnimating');
 
 
         setTimeout(() => {
             this.sliderInner.style.transition = "";
-            this.target.classList.remove('isAnimating');
+            this.sliderContainer.classList.remove('isAnimating');
         }, this.transition.speed);
         this.setDot();
         if (this.autoHeight) {
-            this.target.style.height = this.allSlides[this.curSlide].offsetHeight + "px";
+            this.sliderContainer.style.height = this.allSlides[this.curSlide].offsetHeight + "px";
         }
         this.afterChangeSlide(this);
     }
 
     init(): void {
-        // wrap slider-inner
-        let nowHTML = this.target.innerHTML;
-        this.target.innerHTML = '<div class="slider-inner">' + nowHTML + "</div>";
-
+        let nowHTML = this.sliderContainer.innerHTML;
+        this.sliderContainer.innerHTML = '<div class="slider-inner">' + nowHTML + "</div>";
         this.allSlides = 0;
         this.curSlide = 0;
         this.curLeft = 0;
-        this.totalSlides = this.target.querySelectorAll(".slide").length;
-
-        this.sliderInner = this.target.querySelector(".slider-inner");
+        this.totalSlides = this.sliderContainer.querySelectorAll(".slide").length;
+        this.sliderInner = this.sliderContainer.querySelector(".slider-inner");
         this.loadedCnt = 0;
-
-        // append clones
-        let cloneFirst = this.target.querySelectorAll(".slide")[0].cloneNode(true);
-        this.sliderInner.appendChild(cloneFirst);
-        let cloneLast = this.target.querySelectorAll(".slide")
-            [this.totalSlides - 1].cloneNode(true);
-        this.sliderInner.insertBefore(cloneLast, this.sliderInner.firstChild);
-
+        this.appendClones();
         this.curSlide++;
-        this.allSlides = this.target.querySelectorAll(".slide");
-
-        //_.def.target.style.height = "1px";
-        this.sliderInner.style.width = (this.totalSlides + 2) * 100 + "%";
-        for (let _i = 0; _i < this.totalSlides + 2; _i++) {
-            this.allSlides[_i].style.width = 100 / (this.totalSlides + 2) + "%";
-            this.loadedImg(this.allSlides[_i]);
-        }
-
+        this.allSlides = this.sliderContainer.querySelectorAll(".slide");
+        this.addSlideWith();
         this.buildDots();
         this.setDot();
         this.initArrows();
@@ -141,6 +124,22 @@ export class Slider {
         }
 
         this.isAnimating = false;
+    }
+
+    addSlideWith() {
+        this.sliderInner.style.width = (this.totalSlides + 2) * 100 + "%";
+        for (let _i = 0; _i < this.totalSlides + 2; _i++) {
+            this.allSlides[_i].style.width = 100 / (this.totalSlides + 2) + "%";
+            this.loadedImg(this.allSlides[_i]);
+        }
+    }
+
+    appendClones() {
+        let cloneFirst = this.sliderContainer.querySelectorAll(".slide")[0].cloneNode(true);
+        this.sliderInner.appendChild(cloneFirst);
+        let cloneLast = this.sliderContainer.querySelectorAll(".slide")
+            [this.totalSlides - 1].cloneNode(true);
+        this.sliderInner.insertBefore(cloneLast, this.sliderInner.firstChild);
     }
 
     loadedImg(el) {
@@ -195,7 +194,7 @@ export class Slider {
         if (Math.abs(this.moveX - this.startX) < 40) return;
 
         this.isAnimating = true;
-        this.target.classList.add('isAnimating');
+        this.sliderContainer.classList.add('isAnimating');
         e.preventDefault();
 
         if (this.curLeft + this.moveX - this.startX > 0 && this.curLeft == 0) {
@@ -237,13 +236,13 @@ export class Slider {
         this.moveY = null;
 
         this.isAnimating = false;
-        this.target.classList.remove('isAnimating');
+        this.sliderContainer.classList.remove('isAnimating');
         removeMultiListener(this.sliderInner, ['mousemove', 'touchmove'], this.swipeMove);
         removeMultiListener(document.body, ['mouseup', 'touchend'], this.swipeEnd);
     }
 
     handleLeftArrowClick() {
-        if (!this.target.classList.contains('isAnimating')) {
+        if (!this.sliderContainer.classList.contains('isAnimating')) {
             if (this.curSlide == 1) {
                 this.curSlide = this.totalSlides + 1;
                 this.sliderInner.style.transform =  `translateX(${-this.curSlide * this.slideW}px)`;
@@ -256,7 +255,7 @@ export class Slider {
     }
 
     handleRightArrowClick() {
-        if (!this.target.classList.contains('isAnimating')) {
+        if (!this.sliderContainer.classList.contains('isAnimating')) {
             if (this.curSlide == this.totalSlides) {
                 this.curSlide = 0;
                 this.sliderInner.style.transform = `translateX(${-this.curSlide * this.slideW}px)`;
@@ -289,15 +288,15 @@ export class Slider {
     }
 
     updateSliderDimension() {
-        this.slideW = parseInt(this.target.querySelectorAll(".slide")[0].offsetWidth, 10);
+        this.slideW = parseInt(this.sliderContainer.querySelectorAll(".slide")[0].offsetWidth, 10);
         this.sliderInner.style.transform = `translateX(${-this.slideW * this.curSlide})px`;
 
         if (this.autoHeight) {
-            this.target.style.height = this.allSlides[this.curSlide].offsetHeight + "px";
+            this.sliderContainer.style.height = this.allSlides[this.curSlide].offsetHeight + "px";
         } else {
             for (let i = 0; i < this.totalSlides + 2; i++) {
-                if (this.allSlides[i].offsetHeight > this.target.offsetHeight) {
-                    this.target.style.height = this.allSlides[i].offsetHeight + "px";
+                if (this.allSlides[i].offsetHeight > this.sliderContainer.offsetHeight) {
+                    this.sliderContainer.style.height = this.allSlides[i].offsetHeight + "px";
                 }
             }
         }
