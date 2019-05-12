@@ -1,5 +1,5 @@
 import './index.scss'
-import {Slider} from './utils/slider';
+import {Slider} from './slider';
 
 let slider = new Slider({
     target: document.querySelector(".slider"),

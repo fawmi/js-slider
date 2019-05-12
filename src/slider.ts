@@ -1,4 +1,4 @@
-import {addMultiListener, removeMultiListener} from './class';
+import {addMultiListener, removeMultiListener} from './utils/event-listeners';
 
 interface SliderParameters {
     target: HTMLElement,
