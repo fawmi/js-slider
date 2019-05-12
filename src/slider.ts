@@ -1,15 +1,5 @@
 import {addMultiListener, removeMultiListener} from './utils/event-listeners';
-
-interface SliderParameters {
-    target: HTMLElement,
-    dotsWrapper?: HTMLElement,
-    arrowLeft?: HTMLElement,
-    arrowRight?: HTMLElement,
-    swipe?: Boolean,
-    autoHeight?: Boolean,
-    afterChangeSlide?: Function,
-    transition?: { speed: 300, easing: "" }
-}
+import {ISliderParameters} from './types/slider-parameters.interface';
 
 export class Slider {
     private readonly target;
@@ -46,7 +36,7 @@ export class Slider {
             afterChangeSlide = () => {
             },
             transition = {speed: 300, easing: ""}
-        }: SliderParameters
+        }: ISliderParameters
     ) {
         this.target = target;
         this.dotsWrapper = dotsWrapper;
