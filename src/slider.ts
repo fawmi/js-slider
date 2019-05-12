@@ -116,7 +116,7 @@ export class Slider {
         this.initArrows();
 
         if (this.swipe) {
-            addMultiListener({el: this.sliderInner, events: ['mousedown', 'touchstart'], fn: this.startSwipe});
+            addMultiListener({el: this.sliderInner, events: ['mousedown', 'touchstart'], callback: this.startSwipe});
         }
 
         this.isAnimating = false;
@@ -168,7 +168,7 @@ export class Slider {
         }
     }
 
-    startSwipe(e): void {
+    private startSwipe(e): any {
         let touch = e;
         this.getCurLeft();
         if (!this.isAnimating) {
@@ -178,8 +178,8 @@ export class Slider {
             this.startX = touch.pageX;
             this.startY = touch.pageY;
 
-            addMultiListener({el: this.sliderInner, events: ['mousemove', 'touchmove'], fn: this.swipeMove});
-            addMultiListener({el: document.body, events: ['mouseup', 'touchend'], fn: this.swipeEnd});
+            addMultiListener({el: this.sliderInner, events: ['mousemove', 'touchmove'], callback: this.swipeMove});
+            addMultiListener({el: document.body, events: ['mouseup', 'touchend'], callback: this.swipeEnd});
         }
     }
 
@@ -235,8 +235,8 @@ export class Slider {
 
         this.isAnimating = false;
         this.sliderContainer.classList.remove('isAnimating');
-        removeMultiListener({el: this.sliderInner, events: ['mousemove', 'touchmove'], fn: this.swipeMove});
-        removeMultiListener({el: document.body, events: ['mouseup', 'touchend'], fn: this.swipeEnd});
+        removeMultiListener({el: this.sliderInner, events: ['mousemove', 'touchmove'], callback: this.swipeMove});
+        removeMultiListener({el: document.body, events: ['mouseup', 'touchend'], callback: this.swipeEnd});
     }
 
     handleLeftArrowClick(): void {
