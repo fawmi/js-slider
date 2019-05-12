@@ -65,9 +65,10 @@ export class Slider {
         window.addEventListener("resize", this.updateSliderDimension);
     }
 
-    handleDotsClick(event) {
-        if (event.target.nodeName === "LI") {
-            this.curSlide = event.target.getAttribute("data-slide");
+    handleDotsClick(event: MouseEvent) {
+        let target = event.target as HTMLButtonElement;
+        if (target.nodeName === "BUTTON") {
+            this.curSlide = parseInt(target.getAttribute("data-slide"));
             this.gotoSlide();
         }
     }
@@ -75,7 +76,7 @@ export class Slider {
     buildDots(): void {
         for (let i = 0; i < this.totalSlides; i++) {
             let dot = document.createElement("li");
-            dot.setAttribute("data-slide", `${i + 1}`);
+            dot.insertAdjacentHTML('beforeend', `<button data-slide="${i + 1}">slide-${i + 1}</button>`);
             this.dotsWrapper.appendChild(dot);
         }
     }
