@@ -11,11 +11,11 @@ export class Slider {
     private transition: { speed: any, easing: any };
     private readonly afterChangeSlide: Function;
     private curSlide: number;
-    private totalSlides: number;
+    private slidesCount: number;
     private sliderInner: HTMLElement;
     private curLeft: number;
     private slideW: number;
-    private allSlides: number;
+    private allSlides: Array<HTMLElement>;
     private loadedCnt: number;
     private startX: number;
     private startY: number;
@@ -45,7 +45,6 @@ export class Slider {
         this.swipe = swipe;
         this.autoHeight = autoHeight;
         this.transition = transition;
-
         this.afterChangeSlide = afterChangeSlide;
         this.startSwipe = this.startSwipe.bind(this);
         this.swipeEnd = this.swipeEnd.bind(this);
@@ -74,7 +73,7 @@ export class Slider {
     }
 
     buildDots(): void {
-        for (let i = 0; i < this.totalSlides; i++) {
+        for (let i = 0; i < this.slidesCount; i++) {
             let dot = document.createElement("li");
             dot.insertAdjacentHTML('beforeend', `<button data-slide="${i + 1}">slide-${i + 1}</button>`);
             this.dotsWrapper.appendChild(dot);
@@ -103,18 +102,15 @@ export class Slider {
     }
 
     init(): void {
-        let nowHTML = this.sliderContainer.innerHTML;
-        this.sliderContainer.innerHTML = '<div class="slider-inner">' + nowHTML + "</div>";
-        this.allSlides = 0;
-        this.curSlide = 0;
+        this.addSliderInner();
         this.curLeft = 0;
-        this.totalSlides = this.sliderContainer.querySelectorAll(".slide").length;
         this.sliderInner = this.sliderContainer.querySelector(".slider-inner");
         this.loadedCnt = 0;
+        this.curSlide = 1;
         this.appendClones();
-        this.curSlide++;
-        this.allSlides = this.sliderContainer.querySelectorAll(".slide");
-        this.addSlideWith();
+        this.allSlides = Array.prototype.slice.call(this.sliderContainer.querySelectorAll(".slide"));
+        this.slidesCount = this.allSlides.length;
+        this.addSlideWidth();
         this.buildDots();
         this.setDot();
         this.initArrows();
@@ -126,19 +122,24 @@ export class Slider {
         this.isAnimating = false;
     }
 
-    addSlideWith(): void {
-        this.sliderInner.style.width = (this.totalSlides + 2) * 100 + "%";
-        for (let _i = 0; _i < this.totalSlides + 2; _i++) {
-            this.allSlides[_i].style.width = 100 / (this.totalSlides + 2) + "%";
-            this.loadedImg(this.allSlides[_i]);
-        }
+    addSliderInner() {
+        let nowHTML = this.sliderContainer.innerHTML;
+        this.sliderContainer.innerHTML = '<div class="slider-inner">' + nowHTML + "</div>";
+    }
+
+    addSlideWidth(): void {
+        this.sliderInner.style.width = (this.slidesCount + 2) * 100 + "%";
+        this.allSlides.forEach(slide=> {
+            slide.style.width = 100 / (this.slidesCount + 2) + "%";
+            this.loadedImg(slide);
+        });
     }
 
     appendClones(): void {
-        let cloneFirst = this.sliderContainer.querySelectorAll(".slide")[0].cloneNode(true);
+        let allSlides = this.sliderInner.querySelectorAll('.slide');
+        let cloneFirst = allSlides[0].cloneNode(true);
         this.sliderInner.appendChild(cloneFirst);
-        let cloneLast = this.sliderContainer.querySelectorAll(".slide")
-            [this.totalSlides - 1].cloneNode(true);
+        let cloneLast = allSlides[allSlides.length - 1].cloneNode(true);
         this.sliderInner.insertBefore(cloneLast, this.sliderInner.firstChild);
     }
 
@@ -150,7 +151,7 @@ export class Slider {
             }
             loaded = true;
             this.loadedCnt++;
-            if (this.loadedCnt >= this.totalSlides + 2) {
+            if (this.loadedCnt >= this.slidesCount + 2) {
                 this.updateSliderDimension();
             }
         };
@@ -198,11 +199,8 @@ export class Slider {
         e.preventDefault();
 
         if (this.curLeft + this.moveX - this.startX > 0 && this.curLeft == 0) {
-            this.curLeft = -this.totalSlides * this.slideW;
-        } else if (
-            this.curLeft + this.moveX - this.startX <
-            -(this.totalSlides + 1) * this.slideW
-        ) {
+            this.curLeft = -this.slidesCount * this.slideW;
+        } else if (this.curLeft + this.moveX - this.startX < -(this.slidesCount + 1) * this.slideW) {
             this.curLeft = -this.slideW;
         }
         this.sliderInner.style.transform = `translateX(${this.curLeft + this.moveX - this.startX}px)`;
@@ -222,8 +220,8 @@ export class Slider {
             this.dir == "left" ? this.curSlide-- : this.curSlide++;
 
             if (this.curSlide < 0) {
-                this.curSlide = this.totalSlides;
-            } else if (this.curSlide == this.totalSlides + 2) {
+                this.curSlide = this.slidesCount;
+            } else if (this.curSlide == this.slidesCount + 2) {
                 this.curSlide = 1;
             }
         }
@@ -244,7 +242,7 @@ export class Slider {
     handleLeftArrowClick(): void {
         if (!this.sliderContainer.classList.contains('isAnimating')) {
             if (this.curSlide == 1) {
-                this.curSlide = this.totalSlides + 1;
+                this.curSlide = this.slidesCount + 1;
                 this.sliderInner.style.transform =  `translateX(${-this.curSlide * this.slideW}px)`;
             }
             this.curSlide--;
@@ -256,7 +254,7 @@ export class Slider {
 
     handleRightArrowClick(): void {
         if (!this.sliderContainer.classList.contains('isAnimating')) {
-            if (this.curSlide == this.totalSlides) {
+            if (this.curSlide == this.slidesCount) {
                 this.curSlide = 0;
                 this.sliderInner.style.transform = `translateX(${-this.curSlide * this.slideW}px)`;
             }
@@ -275,13 +273,13 @@ export class Slider {
     setDot(): void {
         let targetDot = this.curSlide - 1;
 
-        for (let j = 0; j < this.totalSlides; j++) {
+        for (let j = 0; j < this.slidesCount; j++) {
             this.dotsWrapper.querySelectorAll("li")[j].classList.remove('active');
         }
 
         if (this.curSlide - 1 < 0) {
-            targetDot = this.totalSlides - 1;
-        } else if (this.curSlide - 1 > this.totalSlides - 1) {
+            targetDot = this.slidesCount - 1;
+        } else if (this.curSlide - 1 > this.slidesCount - 1) {
             targetDot = 0;
         }
         this.dotsWrapper.querySelectorAll("li")[targetDot].classList.add('active')
@@ -294,7 +292,7 @@ export class Slider {
         if (this.autoHeight) {
             this.sliderContainer.style.height = this.allSlides[this.curSlide].offsetHeight + "px";
         } else {
-            for (let i = 0; i < this.totalSlides + 2; i++) {
+            for (let i = 0; i < this.slidesCount + 2; i++) {
                 if (this.allSlides[i].offsetHeight > this.sliderContainer.offsetHeight) {
                     this.sliderContainer.style.height = this.allSlides[i].offsetHeight + "px";
                 }
