@@ -137,9 +137,7 @@ export class Slider {
         this.initArrows();
 
         if (this.swipe) {
-            addMultiListener(this.sliderInner,
-                ['mousedown', 'touchstart'],
-                this.startSwipe);
+            addMultiListener(this.sliderInner, ['mousedown', 'touchstart'], this.startSwipe);
         }
 
         this.isAnimating = false;
@@ -157,7 +155,7 @@ export class Slider {
                 this.updateSliderDimension();
             }
         };
-        let img = el.querySelector("img");
+        let img: HTMLImageElement = el.querySelector("img");
         if (img) {
             img.onload = loadHandler;
             img.src = img.getAttribute("data-src");
