@@ -8,6 +8,7 @@
     "url": "git@github.com:fawmi/js-slider.git"
   },
   "scripts": {
+    "build": "npx tsc && node-sass src/index.scss build/index.css",
     "test": "echo \"Tests will come soon\" && exit 0"
   },
   "keywords": [],
