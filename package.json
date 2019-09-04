@@ -8,7 +8,8 @@
     "url": "git@github.com:fawmi/js-slider.git"
   },
   "scripts": {
-    "build": "npx tsc && node-sass src/index.scss build/index.css",
+    "dev": "parcel index.html",
+    "build": "parcel build --public-url '.' index.html",
     "test": "echo \"Tests will come soon\" && exit 0"
   },
   "keywords": [],
@@ -16,6 +17,7 @@
   "license": "ISC",
   "devDependencies": {
     "node-sass": "^4.12.0",
+    "parcel-bundler": "^1.12.3",
     "typescript": "^3.6.2"
   }
 }
