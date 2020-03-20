@@ -1,23 +1,23 @@
 {
-  "name": "slider",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:fawmi/js-slider.git"
-  },
-  "scripts": {
-    "dev": "parcel index.html",
-    "build": "rm -rf dist && parcel build --public-url '.' index.html",
-    "test": "echo \"Tests will come soon\" && exit 0"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "node-sass": "^4.12.0",
-    "parcel-bundler": "^1.12.3",
-    "typescript": "^3.6.2"
-  }
+    "name": "slider",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:fawmi/js-slider.git"
+    },
+    "scripts": {
+        "dev": "parcel index.html",
+        "build": "rm -rf dist && parcel build --public-url '.' index.html",
+        "test": "echo \"Tests will come soon\" && exit 0"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "node-sass": "^4.13.0",
+        "parcel-bundler": "^1.12.4",
+        "typescript": "^3.8.3"
+    }
 }
